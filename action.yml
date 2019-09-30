@@ -1,0 +1,9 @@
+name: 'Pull Request Trello link check'
+description: 'Checks existence of a Trello link in description of Pull request'
+author: 'Michal Ceresna'
+inputs:
+  repo-token:
+    description: 'The GITHUB_TOKEN secret'
+runs:
+  using: 'node12'
+  main: 'lib/main.js'
