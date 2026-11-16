@@ -1,6 +1,7 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { Response, PullsGetResponse } from '@octokit/rest';
+
+type Octokit = ReturnType<typeof github.getOctokit>;
 
 async function run() {
     try {
@@ -12,7 +13,7 @@ async function run() {
             return;
         }
 
-        const client = new github.GitHub(token);
+        const client = github.getOctokit(token);
 
         core.debug(`fetching details of pr #${prNumber}`);
         const prBody = await getPrBody(client, prNumber);
@@ -27,8 +28,9 @@ async function run() {
             core.setFailed('no trello links found')
         }
     } catch (error) {
-        core.error(error);
-        core.setFailed(error.message);
+        const message = error instanceof Error ? error.message : String(error);
+        core.error(message);
+        core.setFailed(message);
     }
 }
 
@@ -41,14 +43,14 @@ function getPrNumber(): number | undefined {
     return pullRequest.number;
 }
 
-async function getPrBody(client: github.GitHub, prNumber: number): Promise<string> {
-    const res: Response<PullsGetResponse> = await client.pulls.get({
+async function getPrBody(client: Octokit, prNumber: number): Promise<string> {
+    const res = await client.rest.pulls.get({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         pull_number: prNumber,
     });
 
-    const body: string = res.data.body;
+    const body: string = res.data.body ?? '';
     core.debug('found body: ' + body);
     return body;
 }

@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "description": "Github action checking existence of Trello link in Pull Request description",
+  "type": "module",
   "main": "lib/main.js",
   "scripts": {
-    "build": "tsc",
-    "test": "jest"
+    "build": "tsc --noEmit && esbuild src/main.ts --bundle --platform=node --target=node24 --format=esm --outfile=lib/main.js --banner:js=\"import { createRequire as __createRequire } from 'node:module'; const require = __createRequire(import.meta.url);\"",
+    "test": "jest",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -20,23 +22,17 @@
   "author": "Michal Ceresna (https://github.com/ceresnam)",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.0.0",
-    "@actions/github": "^1.0.0"
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.13",
-    "@types/node": "^12.0.4",
-    "husky": "^2.3.0",
-    "jest": "^24.9.0",
-    "jest-circus": "^24.7.1",
-    "ts-jest": "^24.0.2",
-    "typescript": "^3.5.1"
-  },
-  "husky": {
-    "skipCI": true,
-    "hooks": {
-      "pre-commit": "npm run build",
-      "post-commit": "npm prune --production && git add node_modules/* && git commit -m \"Husky commit correct node modules\""
-    }
+    "@swc/core": "^1.16.22",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.6.6",
+    "esbuild": "^0.28.2",
+    "husky": "^9.1.7",
+    "jest": "^30.5.2",
+    "typescript": "^7.0.2"
   }
 }
